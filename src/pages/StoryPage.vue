@@ -43,7 +43,6 @@
       </div>
     </div>
   </div>
-  <!-- {{ commentsData }} -->
 </template>
 
 <script lang="ts" setup>
