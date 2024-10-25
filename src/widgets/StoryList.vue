@@ -10,7 +10,10 @@
           @click="moveToNewsPage(story.id)"
           class="story__container__card">
           <div class="flex flex-col gap-2">
-            <h2 class="mb-1 text-xl font-semibold">{{ story.title }}</h2>
+            <div class="flex flex-col">
+              <h2 class="mb-1 text-xl font-semibold">{{ story.title }}</h2>
+              <Link :url="story.url" />
+            </div>
             <UserName showIcon :user-name="story.by" />
             <DateCreate showIcon :date-time="story.time * 1000" />
           </div>
@@ -28,7 +31,7 @@
 import type { Story } from '@/app/types';
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
-import { DateCreate, UserName, Likes, CommentsCounter, Loading } from '@/shared'
+import { DateCreate, UserName, Link, Likes, CommentsCounter, Loading } from '@/shared'
 
 type Props = {
   isLoad: boolean

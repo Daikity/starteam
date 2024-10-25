@@ -4,5 +4,5 @@
   </div>
 </template>
 <script lang="ts" setup>
-const { text } = defineProps<{ text: string }>()
+const { text } = defineProps<{ text?: string }>()
 </script>

@@ -9,16 +9,20 @@
           </div>
         </div>
       </div>
-      <div class="p-4 space-y-2 flex flex-col gap-4 text-sm dark:text-gray-600">
+      <div class="p-4 space-y-2 flex items-start flex-col gap-4 text-sm dark:text-gray-600">
         <ExpandableText :text="message" />
-        <div 
-          class="font-bold pt-6 cursor-pointer uppercase text-gray-500 hover:text-gray-300" 
-          v-if="kids && kids.length > 0" @click="openAnswer = !openAnswer"
-        >{{openAnswer ? 'Hide answers' : 'Show answers'}}</div>
+        <div class="flex items-center">
+          <CommentsCounter v-if="kids && kids.length > 0" :comments="kids.length" />
+          <ToggleLink 
+            onText="show answers" 
+            offText="hide answers" 
+            @onToggleState="onShowAnswer" 
+            :showBtn="kids && kids.length > 0" />
+        </div>
       </div>
     </div>
     <Comment 
-      class="w-[90%] flex flex-col gap-3 items-end"
+      class="w-[90%] flex flex-col pl-10 gap-3 items-end"
       v-if="kids && kids.length > 0 && openAnswer" 
       v-for="kid in kids"  
       :userName="kid.by" 
@@ -26,13 +30,11 @@
       :datePublic="kid.time * 1000" 
       :message="kid.comment"
     />
-    <div class="flex flex-col items-end w-[80%]">
-    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { DateCreate, UserName } from '@/shared'
+import { DateCreate, UserName, ToggleLink, CommentsCounter } from '@/shared'
 import Comment from '@/widgets/Comment.vue'
 import ExpandableText from '@/shared/UI/ExpandableText.vue'
 import { type Comment as CommentsType } from '@/app/types';
@@ -53,7 +55,7 @@ const {
 } = defineProps<Props>()
 
 const openAnswer = ref<boolean>(false)
-const showMore = ref<boolean>(false)
+const onShowAnswer = (state: boolean) => openAnswer.value = state
 </script>
 
 <style lang="scss">

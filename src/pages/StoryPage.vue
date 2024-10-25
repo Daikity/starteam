@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center">
+  <div class="flex justify-center pb-10">
     <Loading text="Load..." v-if="isLoad && !dataNews" />
     <div v-else class="flex flex-col items-center w-full">
       <LinkPreview :url="dataNews.url" v-if="dataNews" :canOpenLink="false">
@@ -27,11 +27,20 @@
       </LinkPreview>
       <div v-if="dataNews" class="flex flex-col gap-3 pb-3 w-[80%]">
         <div>
-          <UserName v-if="dataNews.by" :userName="dataNews?.by" />
-          <DateCreate :date-time="dataNews.time * 1000" />
+          <UserName v-if="dataNews.by" :userName="dataNews?.by" show-icon />
+          <DateCreate :date-time="dataNews.time * 1000" show-icon />
         </div>
-        <h2 v-html="dataNews?.title" />
+        <div class="flex flex-col">
+          <Link :url="dataNews.url" />
+          <h2 v-html="dataNews?.title" />
+        </div>
         <div v-html="dataNews?.text"/>
+        <div class="flex gap-2 items-center w-full justify-between">
+          <div class="flex gap-1 items-center">
+            <Loading v-if="isLoadComments"/>
+            <CommentsCounter :comments="dataNews.kids.length" />
+          </div>
+        </div>
       </div>
       <div class="flex flex-col gap-5 w-full">
         <Comment 
@@ -51,7 +60,7 @@ import { useCommentsStore } from '@/app/stores/commentsStore'
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router'
 import { type Comment as CommentsType, type Story } from '@/app/types';
-import { UserName, DateCreate, Loading } from '@/shared'
+import { UserName, DateCreate, Loading, CommentsCounter, Link } from '@/shared'
 import Comment from '@/widgets/Comment.vue'
 // @ts-ignore
 import LinkPreview from "@ashwamegh/vue-link-preview";
@@ -60,10 +69,9 @@ const route = useRoute()
 const storiesStore = useStoriesStore()
 const commentsStore = useCommentsStore()
 
-
-
 const dataNews = ref<Story>()
 const isLoad = computed<boolean>(() => storiesStore.isLoadOnceStory)
+const isLoadComments = computed<boolean>(() => commentsStore.isLoad)
 const commentsData = computed<CommentsType[]>(() => commentsStore.comments)
 
 onMounted(async () => {

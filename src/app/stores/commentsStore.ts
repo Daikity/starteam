@@ -13,7 +13,6 @@ export const useCommentsStore = defineStore('comments', () => {
 
   const fetchCommentById = async (commentsId: number): Promise<Comment> => {
     try {
-      isLoad.value = true
       const responses: AxiosResponse = await axios.get(`https://hacker-news.firebaseio.com/v0/item/${commentsId}.json`)
       const data: CommentApi = await responses.data
 
@@ -34,16 +33,21 @@ export const useCommentsStore = defineStore('comments', () => {
     } catch (error) {
       console.error('Ошибка при выполнении запросов:', error);
       throw error;
-    } finally {
-      isLoad.value = false
-    }
+    } 
   }
 
   const buildCommentsTree = async (commentsIds: number[]): Promise<void> => {
     clear()
     if (commentsIds) {
-      const commentsData = await Promise.all(commentsIds.map(comId => fetchCommentById(comId)))
-      comments.value = commentsData
+      try {
+        isLoad.value = true
+        const commentsData = await Promise.all(commentsIds.map(comId => fetchCommentById(comId)))
+        comments.value = commentsData
+      } catch (err) {
+        throw console.error(err)
+      } finally {
+        isLoad.value = false
+      }
     }
   }
 
